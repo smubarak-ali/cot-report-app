@@ -3,3 +3,5 @@
 [Bb]in/
 .vs/
 .DS_Store
+.dockerignore
+Dockerfile
