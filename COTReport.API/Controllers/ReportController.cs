@@ -29,7 +29,7 @@ namespace COTReport.API.Controllers
                 {
                     var dict = new Dictionary<string, List<Report>>();
                     dict.Add(x.Key, x.ToList());
-                    return dict;
+                    return new { Key = x.Key, Data = x.ToList() };
                 });
                 return Ok(groupedList);
             }
