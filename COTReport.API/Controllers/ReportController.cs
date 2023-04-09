@@ -1,6 +1,5 @@
 
 using COTReport.Common.Helper;
-using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,9 +26,7 @@ namespace COTReport.API.Controllers
                 var list = _reportRepo.GetReport();
                 var groupedList = list.GroupBy(x => x.Code).Select(x =>
                 {
-                    var dict = new Dictionary<string, List<Report>>();
-                    dict.Add(x.Key, x.ToList());
-                    return new { Key = x.Key, Data = x.ToList() };
+                    return x.First();
                 });
                 return Ok(groupedList);
             }
