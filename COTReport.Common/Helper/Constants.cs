@@ -1,4 +1,4 @@
-namespace COTReport.App.Helper
+namespace COTReport.Common.Helper
 {
     public class Constants
     {

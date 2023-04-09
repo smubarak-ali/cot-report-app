@@ -1,12 +1,12 @@
-using COTReport.App.DTO;
+using COTReport.Common.Model;
 using COTReport.DAL.Entity;
 
-namespace COTReport.App.Mapper
+namespace COTReport.Common.Mapper
 {
     public static class DtoToEntityMapper
     {
 
-        public static Report ToEntity(this ReportDto obj, string code)
+        public static Report ToEntity(this ReportCsvModel obj, string code)
         {
             if (obj == null) return new Report();
 

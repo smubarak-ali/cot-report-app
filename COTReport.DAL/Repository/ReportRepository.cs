@@ -14,12 +14,18 @@ namespace COTReport.DAL.Repository
 
         public void SaveRecords(List<Report> list)
         {
-            foreach (Report cot in list)
+            var entityList = _dbContext.Report.ToList();
+            if (entityList == null || entityList.Count == 0)
             {
-                _dbContext.Report.Add(cot);
+                _dbContext.Report.AddRange(list);
+                _dbContext.SaveChanges();
+                return;
             }
+        }
 
-            _dbContext.SaveChanges();
+        public List<Report> GetReport()
+        {
+            return _dbContext.Report.ToList();
         }
     }
 }

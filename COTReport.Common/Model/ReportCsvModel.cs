@@ -1,6 +1,6 @@
-namespace COTReport.App.DTO
+namespace COTReport.Common.Model
 {
-    public class ReportDto
+    public class ReportCsvModel
     {
         public string? Instrument { get; set; }
         public DateTime Date { get; set; }

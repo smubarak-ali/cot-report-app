@@ -1,12 +1,12 @@
 using System.Globalization;
-using COTReport.App.DTO;
+using COTReport.Common.Model;
 using CsvHelper.Configuration;
 
-namespace COTReport.App.Mapper
+namespace COTReport.Common.Helper
 {
-    public sealed class ReportDtoMap : ClassMap<ReportDto>
+    public sealed class ReportCsvModelMap : ClassMap<ReportCsvModel>
     {
-        public ReportDtoMap()
+        public ReportCsvModelMap()
         {
             Map(x => x.Instrument).Name("Market_and_Exchange_Names");
             Map(x => x.Date).Name("As_of_Date_In_Form_YYMMDD")

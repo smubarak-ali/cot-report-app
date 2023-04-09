@@ -1,6 +1,6 @@
-﻿using COTReport.App.DTO;
-using COTReport.App.Helper;
-using COTReport.App.Mapper;
+﻿using COTReport.Common.Helper;
+using COTReport.Common.Mapper;
+using COTReport.Common.Model;
 using COTReport.DAL.Context;
 using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
@@ -20,8 +20,8 @@ try
     using (var reader = new StreamReader(filePath))
     using (var csv = new CsvReader(reader, culture: System.Globalization.CultureInfo.InvariantCulture))
     {
-        csv.Context.RegisterClassMap<ReportDtoMap>();
-        var records = csv.GetRecords<ReportDto>().ToList();
+        csv.Context.RegisterClassMap<ReportCsvModelMap>();
+        var records = csv.GetRecords<ReportCsvModel>().ToList();
 
         var cotRepo = serviceProvider.GetService<ReportRepository>();
         var entityList = new List<Report>();
