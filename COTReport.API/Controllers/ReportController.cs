@@ -1,4 +1,5 @@
 
+using COTReport.Common.Helper;
 using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace COTReport.API.Controllers
     public class ReportController : ControllerBase
     {
         private readonly ReportRepository _reportRepo;
+        private readonly MyFxbookHelper _myFxbookHelper;
 
-        public ReportController(ReportRepository reportRepository)
+        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper)
         {
             _reportRepo = reportRepository;
+            _myFxbookHelper = myFxbookHelper;
         }
 
         [HttpGet("cot")]
@@ -37,12 +40,12 @@ namespace COTReport.API.Controllers
         }
 
         [HttpGet("sentiment")]
-        public IActionResult GetSentimentReport()
+        public async Task<IActionResult> GetSentimentReport()
         {
             try
             {
-
-                return Ok();
+                var obj = await _myFxbookHelper.GetSeniments();
+                return Ok(obj);
             }
             catch (Exception ex)
             {
