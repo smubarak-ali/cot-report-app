@@ -1,4 +1,5 @@
 
+using COTReport.Common.Exceptions;
 using COTReport.Common.Helper;
 using COTReport.DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,13 @@ namespace COTReport.API.Controllers
     {
         private readonly ReportRepository _reportRepo;
         private readonly MyFxbookHelper _myFxbookHelper;
+        private readonly ILogger _logger;
 
-        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper)
+        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper, ILogger<ReportController> logger)
         {
             _reportRepo = reportRepository;
             _myFxbookHelper = myFxbookHelper;
+            _logger = logger;
         }
 
         [HttpGet("cot")]
@@ -30,8 +33,14 @@ namespace COTReport.API.Controllers
                 });
                 return Ok(groupedList);
             }
+            catch (ExternalApiException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
             }
         }

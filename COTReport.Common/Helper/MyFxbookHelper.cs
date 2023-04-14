@@ -1,7 +1,7 @@
-using System.Net;
 using COTReport.Common.Exceptions;
 using COTReport.Common.Model;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace COTReport.Common.Helper
@@ -10,15 +10,17 @@ namespace COTReport.Common.Helper
     {
         private readonly HttpClient _httpClient;
         private readonly IMemoryCache _cache;
+        private readonly ILogger _logger;
 
         private readonly string MyFxbook_Session = "MyFxbook_Session";
         private readonly string MyFxbook_Sentiments = "MyFxbook_Sentiments";
 
-        public MyFxbookHelper(IMemoryCache cache)
+        public MyFxbookHelper(IMemoryCache cache, ILogger<MyFxbookHelper> logger)
         {
             _cache = cache;
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri(Environment.GetEnvironmentVariable("MYFXBOOK_URL"));
+            _logger = logger;
             //ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
 
@@ -33,14 +35,14 @@ namespace COTReport.Common.Helper
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (responseModel.Symbols != null && responseModel.Symbols.Count > 0)
+                if (responseModel?.Symbols != null && responseModel.Symbols.Count > 0)
                     _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromMinutes(30));
 
-                return responseModel;
+                return responseModel ?? new MyFxbookmodel();
             }
 
             var data = JsonConvert.DeserializeObject<MyFxbookmodel>(sentiments);
-            return data;
+            return data ?? new MyFxbookmodel();
         }
 
         private async Task<string> MyFxbookLogin()
@@ -54,10 +56,10 @@ namespace COTReport.Common.Helper
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (!string.IsNullOrEmpty(responseModel.Session))
+                if (!string.IsNullOrEmpty(responseModel?.Session))
                     _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
 
-                return responseModel.Session;
+                return responseModel?.Session ?? string.Empty;
             }
 
             return session;

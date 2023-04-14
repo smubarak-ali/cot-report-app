@@ -4,6 +4,9 @@ using COTReport.DAL.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("MyLocal", policy =>
