@@ -33,11 +33,6 @@ namespace COTReport.API.Controllers
                 });
                 return Ok(groupedList);
             }
-            catch (ExternalApiException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
@@ -52,6 +47,11 @@ namespace COTReport.API.Controllers
             {
                 var obj = await _myFxbookHelper.GetSeniments();
                 return Ok(obj);
+            }
+            catch (ExternalApiException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

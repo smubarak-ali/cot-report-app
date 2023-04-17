@@ -28,16 +28,21 @@ namespace COTReport.Common.Helper
         {
             if (!_cache.TryGetValue(MyFxbook_Sentiments, out string sentiments))
             {
-                string url = $"api/get-community-outlook.json?session={await MyFxbookLogin()}";
+                string url = $"api/get-community-outlook.json?session={await MyFxbookLogin()}&debug=1";
                 var response = await _httpClient.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                     throw new ExternalApiException("Failed the request when calling the myfxbook sentiments api");
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (responseModel?.Symbols != null && responseModel.Symbols.Count > 0)
-                    _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromMinutes(30));
 
+                if (responseModel == null || !string.IsNullOrEmpty(responseModel.Error))
+                    throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
+
+                if (responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
+                    throw new ExternalApiException("Failed the get the sentiments when calling the myfxbook api");
+
+                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1.5));
                 return responseModel ?? new MyFxbookmodel();
             }
 
@@ -56,9 +61,13 @@ namespace COTReport.Common.Helper
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (!string.IsNullOrEmpty(responseModel?.Session))
-                    _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(1));
+                if (responseModel == null || !string.IsNullOrEmpty(responseModel.Error))
+                    throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
+                if (string.IsNullOrEmpty(responseModel.Session))
+                    throw new ExternalApiException("Failed the get the session token when calling the myfxbook login api");
+
+                _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(10));
                 return responseModel?.Session ?? string.Empty;
             }
 
