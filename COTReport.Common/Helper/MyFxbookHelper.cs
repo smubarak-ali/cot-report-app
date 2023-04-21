@@ -61,7 +61,7 @@ namespace COTReport.Common.Helper
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (responseModel == null || !string.IsNullOrEmpty(responseModel.Error))
+                if (responseModel == null)
                     throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
                 if (string.IsNullOrEmpty(responseModel.Session))
