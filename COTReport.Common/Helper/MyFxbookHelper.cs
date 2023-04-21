@@ -42,7 +42,7 @@ namespace COTReport.Common.Helper
                 if (responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
                     throw new ExternalApiException("Failed the get the sentiments when calling the myfxbook api");
 
-                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1.5));
+                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1));
                 return responseModel ?? new MyFxbookmodel();
             }
 
@@ -61,13 +61,10 @@ namespace COTReport.Common.Helper
 
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (responseModel == null)
+                if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || string.IsNullOrEmpty(responseModel.Session))
                     throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
-                if (string.IsNullOrEmpty(responseModel.Session))
-                    throw new ExternalApiException("Failed the get the session token when calling the myfxbook login api");
-
-                _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(10));
+                _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(30));
                 return responseModel?.Session ?? string.Empty;
             }
 
