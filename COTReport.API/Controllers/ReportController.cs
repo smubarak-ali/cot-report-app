@@ -31,7 +31,7 @@ namespace COTReport.API.Controllers
                 {
                     return x.First();
                 });
-                return Ok(groupedList);
+                return Ok(groupedList.OrderBy(x => x.Code));
             }
             catch (Exception ex)
             {
