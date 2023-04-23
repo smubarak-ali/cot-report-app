@@ -40,6 +40,21 @@ namespace COTReport.API.Controllers
             }
         }
 
+        [HttpGet("cot/{code}")]
+        public IActionResult GetCotReportByCode([FromRoute] string code)
+        {
+            try
+            {
+                var list = _reportRepo.GetReportByCode(code);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("sentiment")]
         public async Task<IActionResult> GetSentimentReport()
         {

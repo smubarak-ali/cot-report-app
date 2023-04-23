@@ -27,5 +27,10 @@ namespace COTReport.DAL.Repository
         {
             return _dbContext.Report.ToList();
         }
+
+        public List<Report> GetReportByCode(string code)
+        {
+            return _dbContext.Report.Where(x => x.Code.ToLower().Equals(code)).ToList();
+        }
     }
 }
