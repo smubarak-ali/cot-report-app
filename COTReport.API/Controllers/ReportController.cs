@@ -41,7 +41,7 @@ namespace COTReport.API.Controllers
         }
 
         [HttpGet("cot/{code}")]
-        public IActionResult GetCotReportByCode([FromRoute] string code)
+        public IActionResult GetCotReportByCode(string code)
         {
             try
             {
