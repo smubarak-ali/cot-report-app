@@ -21,7 +21,6 @@ namespace COTReport.Common.Helper
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri(Environment.GetEnvironmentVariable("MYFXBOOK_URL"));
             _logger = logger;
-            //ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
 
         public async Task<MyFxbookmodel> GetSeniments()
@@ -36,13 +35,10 @@ namespace COTReport.Common.Helper
                 var responseStr = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
 
-                if (responseModel == null || !string.IsNullOrEmpty(responseModel.Error))
+                if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
                     throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
-                if (responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
-                    throw new ExternalApiException("Failed the get the sentiments when calling the myfxbook api");
-
-                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1));
+                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(2));
                 return responseModel ?? new MyFxbookmodel();
             }
 

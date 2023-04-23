@@ -1,8 +1,11 @@
 
 using COTReport.Common.Exceptions;
 using COTReport.Common.Helper;
+using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 
 namespace COTReport.API.Controllers
 {
@@ -13,12 +16,14 @@ namespace COTReport.API.Controllers
         private readonly ReportRepository _reportRepo;
         private readonly MyFxbookHelper _myFxbookHelper;
         private readonly ILogger _logger;
+        private readonly IMemoryCache _cache;
 
-        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper, ILogger<ReportController> logger)
+        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper, ILogger<ReportController> logger, IMemoryCache cache)
         {
             _reportRepo = reportRepository;
             _myFxbookHelper = myFxbookHelper;
             _logger = logger;
+            _cache = cache;
         }
 
         [HttpGet("cot")]
@@ -26,12 +31,21 @@ namespace COTReport.API.Controllers
         {
             try
             {
-                var list = _reportRepo.GetReport();
-                var groupedList = list.GroupBy(x => x.Code).Select(x =>
+                if (!_cache.TryGetValue("cot", out string cachedList))
                 {
-                    return x.First();
-                });
-                return Ok(groupedList.OrderBy(x => x.Code));
+                    var list = _reportRepo.GetReport();
+                    var groupedList = list.GroupBy(x => x.Code).Select(x =>
+                    {
+                        return x.First();
+                    });
+
+                    var responseList = groupedList.OrderBy(x => x.Code);
+                    _cache.Set("cot", JsonConvert.SerializeObject(responseList), absoluteExpirationRelativeToNow: TimeSpan.FromHours(3));
+                    return Ok(responseList);
+                }
+
+                var cachedListForResponse = JsonConvert.DeserializeObject<IEnumerable<Report>>(cachedList);
+                return Ok(cachedListForResponse);
             }
             catch (Exception ex)
             {
@@ -45,8 +59,15 @@ namespace COTReport.API.Controllers
         {
             try
             {
-                var list = _reportRepo.GetReportByCode(code);
-                return Ok(list);
+                if (!_cache.TryGetValue(code, out string cachedCotList))
+                {
+                    var list = _reportRepo.GetReportByCode(code);
+                    _cache.Set(code, JsonConvert.SerializeObject(list), absoluteExpirationRelativeToNow: TimeSpan.FromHours(3));
+                    return Ok(list);
+                }
+
+                var responseList = JsonConvert.DeserializeObject<List<Report>>(cachedCotList);
+                return Ok(responseList);
             }
             catch (Exception ex)
             {
