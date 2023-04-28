@@ -14,23 +14,19 @@ namespace COTReport.DAL.Repository
 
         public void SaveRecords(List<Report> list)
         {
-            var entityList = _dbContext.Report.ToList();
-            if (entityList == null || entityList.Count == 0)
-            {
-                _dbContext.Report.AddRange(list);
-                _dbContext.SaveChanges();
-                return;
-            }
+            _dbContext.Report.AddRange(list);
+            _dbContext.SaveChanges();
+            return;
         }
 
         public List<Report> GetReport()
         {
-            return _dbContext.Report.ToList();
+            return _dbContext.Report.OrderBy(x => x.Code).ToList();
         }
 
         public List<Report> GetReportByCode(string code)
         {
-            return _dbContext.Report.Where(x => x.Code.ToLower().Equals(code)).ToList();
+            return _dbContext.Report.Where(x => x.Code.ToLower().Equals(code.ToLower())).OrderBy(x => x.ReportDate).ToList();
         }
     }
 }

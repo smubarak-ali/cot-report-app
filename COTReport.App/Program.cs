@@ -13,6 +13,10 @@ services.AddSingleton<ReportRepository>();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 ServiceProvider serviceProvider = services.BuildServiceProvider();
 
+ReportRepository cotRepo;
+List<Report> existingList;
+var entityList = new List<Report>();
+
 try
 {
     string filePath = Environment.GetEnvironmentVariable("FULL_FILE_PATH");
@@ -22,50 +26,50 @@ try
     {
         csv.Context.RegisterClassMap<ReportCsvModelMap>();
         var records = csv.GetRecords<ReportCsvModel>().ToList();
+        cotRepo = serviceProvider.GetService<ReportRepository>();
+        existingList = cotRepo.GetReport();
 
-        var cotRepo = serviceProvider.GetService<ReportRepository>();
-        var entityList = new List<Report>();
         foreach (var record in records)
         {
             if (string.Equals(record.Instrument, Constants.InstrumentName.GOLD, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.GOLD));
+                ValidationOfRecord(Constants.InstrumentCode.GOLD, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.CAD, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.CAD));
+                ValidationOfRecord(Constants.InstrumentCode.CAD, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.CHF, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.CHF));
+                ValidationOfRecord(Constants.InstrumentCode.CHF, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.GBP, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.GBP));
+                ValidationOfRecord(Constants.InstrumentCode.GBP, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.JPY, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.JPY));
+                ValidationOfRecord(Constants.InstrumentCode.JPY, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.USD, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.USD));
+                ValidationOfRecord(Constants.InstrumentCode.USD, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.EUR, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.EUR));
+                ValidationOfRecord(Constants.InstrumentCode.EUR, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.NZD, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.NZD));
+                ValidationOfRecord(Constants.InstrumentCode.NZD, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.AUD, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.AUD));
+                ValidationOfRecord(Constants.InstrumentCode.AUD, record);
             }
             else if (string.Equals(record.Instrument, Constants.InstrumentName.BITCOIN, StringComparison.OrdinalIgnoreCase))
             {
-                entityList.Add(record.ToEntity(code: Constants.InstrumentCode.BTC));
+                ValidationOfRecord(Constants.InstrumentCode.BTC, record);
             }
         }
 
@@ -77,6 +81,22 @@ catch (Exception ex)
     Console.WriteLine(ex.Message);
 }
 
-
+void ValidationOfRecord(string code, ReportCsvModel record)
+{
+    var existingRecords = existingList.Where(x => x.Code.ToLower().Equals(code.ToLower()));
+    if (existingRecords != null)
+    {
+        bool isMatched = existingRecords.Any(x =>
+        {
+            // Console.WriteLine($" {code} DATE: {x.ReportDate.Date}");
+            return DateTime.Compare(x.ReportDate.Date, record.Date.Date) == 0;
+        });
+        // Console.WriteLine($" RECORD DATE: {record.Date.Date}");
+        if (!isMatched)
+        {
+            entityList.Add(record.ToEntity(code: code));
+        }
+    }
+}
 
 
