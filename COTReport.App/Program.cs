@@ -86,15 +86,11 @@ void ValidationOfRecord(string code, ReportCsvModel record)
     var existingRecords = existingList.Where(x => x.Code.ToLower().Equals(code.ToLower()));
     if (existingRecords != null)
     {
-        bool isMatched = existingRecords.Any(x =>
-        {
-            // Console.WriteLine($" {code} DATE: {x.ReportDate.Date}");
-            return DateTime.Compare(x.ReportDate.Date, record.Date.Date) == 0;
-        });
-        // Console.WriteLine($" RECORD DATE: {record.Date.Date}");
+        bool isMatched = existingRecords.Any(x => DateTime.Compare(x.ReportDate.Date, record.Date.Date) == 0);
+
         if (!isMatched)
         {
-            entityList.Add(record.ToEntity(code: code));
+            entityList.Add(record.ToEntity(code));
         }
     }
 }
