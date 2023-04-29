@@ -21,7 +21,7 @@ namespace COTReport.DAL.Repository
 
         public List<Report> GetReport()
         {
-            return _dbContext.Report.OrderBy(x => x.ReportDate).ToList();
+            return _dbContext.Report.OrderByDescending(x => x.ReportDate).ToList();
         }
 
         public List<Report> GetReportByCode(string code)
