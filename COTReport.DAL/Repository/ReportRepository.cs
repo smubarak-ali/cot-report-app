@@ -21,12 +21,12 @@ namespace COTReport.DAL.Repository
 
         public List<Report> GetReport()
         {
-            return _dbContext.Report.OrderBy(x => x.Code).ToList();
+            return _dbContext.Report.OrderByDescending(x => x.Code).ToList();
         }
 
         public List<Report> GetReportByCode(string code)
         {
-            return _dbContext.Report.Where(x => x.Code.ToLower().Equals(code.ToLower())).OrderBy(x => x.ReportDate).ToList();
+            return _dbContext.Report.Where(x => x.Code.ToLower().Equals(code.ToLower())).OrderByDescending(x => x.ReportDate).ToList();
         }
     }
 }
