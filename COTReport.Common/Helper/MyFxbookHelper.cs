@@ -38,7 +38,7 @@ namespace COTReport.Common.Helper
                 if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
                     throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
-                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(2));
+                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1));
                 return responseModel ?? new MyFxbookmodel();
             }
 
