@@ -17,7 +17,7 @@ builder.Services.AddCors(opt =>
 
 builder.Services.AddStackExchangeRedisCache(opt =>
 {
-    opt.Configuration = "localhost:6000";
+    opt.Configuration = Environment.GetEnvironmentVariable("REDIS_HOST");
 });
 
 builder.Services.AddDbContext<ReportDbContext>();
