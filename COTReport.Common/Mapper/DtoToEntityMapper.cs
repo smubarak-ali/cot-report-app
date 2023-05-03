@@ -22,5 +22,23 @@ namespace COTReport.Common.Mapper
             entity.Code = code;
             return entity;
         }
+
+        public static List<Sentiment> ToEntity(this List<SentimentModel> models)
+        {
+            var entityList = new List<Sentiment>();
+            foreach (var item in models)
+            {
+                var entity = new Sentiment();
+                entity.LongPercentage = item.LongPercentage;
+                entity.LongPosition = item.LongPositions;
+                entity.PairName = item.Name;
+                entity.RecordDate = DateTime.Now;
+                entity.ShortPercentage = item.ShortPercentage;
+                entity.ShortPosition = item.ShortPositions;
+                entityList.Add(entity);
+            }
+
+            return entityList;
+        }
     }
 }

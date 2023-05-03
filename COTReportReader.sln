@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.Common", "COTRepo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.API", "COTReport.API\COTReport.API.csproj", "{B517737D-6801-4243-B3BE-7675AC90373F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.Worker", "COTReport.Worker\COTReport.Worker.csproj", "{80606FCA-B305-4841-B637-60ADC167E217}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B517737D-6801-4243-B3BE-7675AC90373F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B517737D-6801-4243-B3BE-7675AC90373F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B517737D-6801-4243-B3BE-7675AC90373F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80606FCA-B305-4841-B637-60ADC167E217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80606FCA-B305-4841-B637-60ADC167E217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80606FCA-B305-4841-B637-60ADC167E217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80606FCA-B305-4841-B637-60ADC167E217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

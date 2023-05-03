@@ -29,5 +29,6 @@ namespace COTReport.Common.Helper
             public static string USD = "USD";
             public static string EUR = "EUR";
         }
+
     }
 }
