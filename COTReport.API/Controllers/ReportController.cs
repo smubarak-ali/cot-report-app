@@ -90,7 +90,7 @@ namespace COTReport.API.Controllers
                 if (redisList == null)
                 {
                     var list = await _sentimentRepo.GetSentimentsAsync();
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(65));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(30));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(list);
                 }
