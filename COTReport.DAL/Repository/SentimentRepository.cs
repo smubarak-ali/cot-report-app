@@ -20,7 +20,7 @@ namespace COTReport.DAL.Repository
             {
                 foreach (var record in existingRecords)
                 {
-                    var existingItem = list.Where(x => x.PairName.Equals(record.PairName)).FirstOrDefault();
+                    var existingItem = list.Where(x => x.Name.Equals(record.Name)).FirstOrDefault();
                     if (existingItem != null)
                     {
                         record.LongPercentage = existingItem.LongPercentage;

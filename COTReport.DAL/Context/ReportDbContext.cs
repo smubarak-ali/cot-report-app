@@ -70,7 +70,7 @@ namespace COTReport.DAL.Context
                     .HasColumnName("id");
 
             builder.Entity<Sentiment>()
-                .Property(x => x.PairName)
+                .Property(x => x.Name)
                 .HasColumnName("name");
 
             builder.Entity<Sentiment>()

@@ -31,7 +31,7 @@ namespace COTReport.Common.Mapper
                 var entity = new Sentiment();
                 entity.LongPercentage = item.LongPercentage;
                 entity.LongPosition = item.LongPositions;
-                entity.PairName = item.Name;
+                entity.Name = item.Name;
                 entity.RecordDate = DateTime.Now;
                 entity.ShortPercentage = item.ShortPercentage;
                 entity.ShortPosition = item.ShortPositions;
