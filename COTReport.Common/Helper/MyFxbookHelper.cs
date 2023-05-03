@@ -23,7 +23,9 @@ namespace COTReport.Common.Helper
 
         public async Task<MyFxbookmodel> GetSeniments()
         {
-            string url = $"api/get-community-outlook.json?session={await MyFxbookLogin()}&debug=1";
+            string token = await MyFxbookLogin();
+            _logger.LogInformation($"MyFxBook Session Token: {token}");
+            string url = $"api/get-community-outlook.json?session={token}&debug=1";
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
                 throw new ExternalApiException("Failed the request when calling the myfxbook sentiments api");
