@@ -92,11 +92,11 @@ namespace COTReport.API.Controllers
                     var list = await _sentimentRepo.GetSentimentsAsync();
                     var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(30));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
-                    return Ok(list);
+                    return Ok(new { Symbols = list });
                 }
 
                 var responseList = JsonConvert.DeserializeObject<List<Sentiment>>(redisList);
-                return Ok(responseList);
+                return Ok(new { Symbols = responseList });
             }
             catch (Exception ex)
             {
