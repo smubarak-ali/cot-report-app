@@ -1,6 +1,6 @@
 using COTReport.Common.Exceptions;
 using COTReport.Common.Model;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -9,13 +9,11 @@ namespace COTReport.Common.Helper
     public class MyFxbookHelper
     {
         private readonly HttpClient _httpClient;
-        private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _cache;
         private readonly ILogger _logger;
-
         private readonly string MyFxbook_Session = "MyFxbook_Session";
-        private readonly string MyFxbook_Sentiments = "MyFxbook_Sentiments";
 
-        public MyFxbookHelper(IMemoryCache cache, ILogger<MyFxbookHelper> logger)
+        public MyFxbookHelper(IDistributedCache cache, ILogger<MyFxbookHelper> logger)
         {
             _cache = cache;
             _httpClient = new HttpClient();
@@ -25,46 +23,42 @@ namespace COTReport.Common.Helper
 
         public async Task<MyFxbookmodel> GetSeniments()
         {
-            if (!_cache.TryGetValue(MyFxbook_Sentiments, out string sentiments))
-            {
-                string url = $"api/get-community-outlook.json?session={await MyFxbookLogin()}&debug=1";
-                var response = await _httpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                    throw new ExternalApiException("Failed the request when calling the myfxbook sentiments api");
+            string url = $"api/get-community-outlook.json?session={await MyFxbookLogin()}&debug=1";
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                throw new ExternalApiException("Failed the request when calling the myfxbook sentiments api");
 
-                var responseStr = await response.Content.ReadAsStringAsync();
-                var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
 
-                if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
-                    throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
+            if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || responseModel.Symbols == null || responseModel.Symbols.Count <= 0)
+                throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
 
-                _cache.Set(MyFxbook_Sentiments, JsonConvert.SerializeObject(responseModel), absoluteExpirationRelativeToNow: TimeSpan.FromHours(1));
-                return responseModel ?? new MyFxbookmodel();
-            }
+            return responseModel;
 
-            var data = JsonConvert.DeserializeObject<MyFxbookmodel>(sentiments);
-            return data ?? new MyFxbookmodel();
         }
 
         private async Task<string> MyFxbookLogin()
         {
-            if (!_cache.TryGetValue(MyFxbook_Session, out string session))
+            string sessionToken = await _cache.GetStringAsync(MyFxbook_Session);
+            if (!string.IsNullOrEmpty(sessionToken))
             {
-                string url = $"api/login.json?email={Environment.GetEnvironmentVariable("MYFXBOOK_USER")}&password={Environment.GetEnvironmentVariable("MYFXBOOK_PASS")}";
-                var response = await _httpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                    throw new ExternalApiException("Failed the request when calling the myfxbook login api");
-
-                var responseStr = await response.Content.ReadAsStringAsync();
-                var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
-                if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || string.IsNullOrEmpty(responseModel.Session))
-                    throw new ExternalApiException($"The response from myfxbook was either null or the following error => '{responseModel?.Message}'");
-
-                _cache.Set(MyFxbook_Session, responseModel.Session, absoluteExpirationRelativeToNow: TimeSpan.FromDays(30));
-                return responseModel?.Session ?? string.Empty;
+                return sessionToken;
             }
 
-            return session;
+            string url = $"api/login.json?email={Environment.GetEnvironmentVariable("MYFXBOOK_USER")}&password={Environment.GetEnvironmentVariable("MYFXBOOK_PASS")}";
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                throw new ExternalApiException("Failed the myfxbook login api request");
+
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
+            if (responseModel == null || string.Equals(responseModel.Error.ToLower(), "true") || string.IsNullOrEmpty(responseModel.Session))
+                throw new ExternalApiException($" The login response from myfxbook was either null or the following error => '{responseModel?.Message}'");
+
+            var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddDays(120));
+            await _cache.SetStringAsync(MyFxbook_Session, responseModel.Session, cacheEntryOptions);
+            return responseModel?.Session ?? string.Empty;
         }
     }
 }

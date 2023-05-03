@@ -7,6 +7,7 @@ namespace COTReport.DAL.Context
     {
 
         public DbSet<Report>? Report { get; set; }
+        public DbSet<Sentiment>? Sentiment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -59,6 +60,38 @@ namespace COTReport.DAL.Context
             builder.Entity<Report>()
                     .Property(x => x.TotalShort)
                     .HasColumnName("total_short");
+
+
+            builder.Entity<Sentiment>().ToTable("sentiment");
+            builder.Entity<Sentiment>().HasKey(x => x.Id);
+
+            builder.Entity<Sentiment>()
+                    .Property(x => x.Id)
+                    .HasColumnName("id");
+
+            builder.Entity<Sentiment>()
+                .Property(x => x.PairName)
+                .HasColumnName("name");
+
+            builder.Entity<Sentiment>()
+                .Property(x => x.LongPercentage)
+                .HasColumnName("long_percent");
+
+            builder.Entity<Sentiment>()
+                .Property(x => x.ShortPercentage)
+                .HasColumnName("short_percent");
+
+            builder.Entity<Sentiment>()
+                .Property(x => x.LongPosition)
+                .HasColumnName("long_position");
+
+            builder.Entity<Sentiment>()
+                .Property(x => x.ShortPosition)
+                .HasColumnName("short_position");
+
+            builder.Entity<Sentiment>()
+                    .Property(x => x.RecordDate)
+                    .HasColumnName("record_date");
 
             base.OnModelCreating(builder);
         }

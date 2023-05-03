@@ -1,9 +1,7 @@
-
-using COTReport.Common.Exceptions;
-using COTReport.Common.Helper;
 using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
@@ -14,37 +12,40 @@ namespace COTReport.API.Controllers
     public class ReportController : ControllerBase
     {
         private readonly ReportRepository _reportRepo;
-        private readonly MyFxbookHelper _myFxbookHelper;
+        private readonly SentimentRepository _sentimentRepo;
         private readonly ILogger _logger;
-        private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _cache;
 
-        public ReportController(ReportRepository reportRepository, MyFxbookHelper myFxbookHelper, ILogger<ReportController> logger, IMemoryCache cache)
+        public ReportController(ReportRepository reportRepository, ILogger<ReportController> logger, IDistributedCache cache, SentimentRepository sentimentRepo)
         {
             _reportRepo = reportRepository;
-            _myFxbookHelper = myFxbookHelper;
+            _sentimentRepo = sentimentRepo;
             _logger = logger;
             _cache = cache;
         }
 
         [HttpGet("cot")]
-        public IActionResult GetCotReport()
+        public async Task<IActionResult> GetCotReport()
         {
             try
             {
-                if (!_cache.TryGetValue("cot", out string cachedList))
+                string cacheKey = "cot";
+                var redisList = await _cache.GetStringAsync(cacheKey);
+                if (redisList == null)
                 {
-                    var list = _reportRepo.GetReport();
+                    var list = await _reportRepo.GetReportAsync();
                     var groupedList = list.GroupBy(x => x.Code).Select(x =>
                     {
                         return x.First();
                     });
 
                     var responseList = groupedList.OrderBy(x => x.Code);
-                    _cache.Set("cot", JsonConvert.SerializeObject(responseList), absoluteExpirationRelativeToNow: TimeSpan.FromHours(3));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(120));
+                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(responseList), cacheEntryOptions);
                     return Ok(responseList);
                 }
 
-                var cachedListForResponse = JsonConvert.DeserializeObject<IEnumerable<Report>>(cachedList);
+                var cachedListForResponse = JsonConvert.DeserializeObject<IEnumerable<Report>>(redisList);
                 return Ok(cachedListForResponse);
             }
             catch (Exception ex)
@@ -55,18 +56,21 @@ namespace COTReport.API.Controllers
         }
 
         [HttpGet("cot/{code}")]
-        public IActionResult GetCotReportByCode(string code)
+        public async Task<IActionResult> GetCotReportByCode(string code)
         {
             try
             {
-                if (!_cache.TryGetValue(code, out string cachedCotList))
+                string cacheKey = code;
+                var redisList = await _cache.GetStringAsync(cacheKey);
+                if (redisList == null)
                 {
-                    var list = _reportRepo.GetReportByCode(code);
-                    _cache.Set(code, JsonConvert.SerializeObject(list), absoluteExpirationRelativeToNow: TimeSpan.FromHours(3));
+                    var list = await _reportRepo.GetReportByCodeAsync(code);
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(120));
+                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(list);
                 }
 
-                var responseList = JsonConvert.DeserializeObject<List<Report>>(cachedCotList);
+                var responseList = JsonConvert.DeserializeObject<List<Report>>(redisList);
                 return Ok(responseList);
             }
             catch (Exception ex)
@@ -81,16 +85,22 @@ namespace COTReport.API.Controllers
         {
             try
             {
-                var obj = await _myFxbookHelper.GetSeniments();
-                return Ok(obj);
-            }
-            catch (ExternalApiException ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                string cacheKey = "sentiments";
+                var redisList = await _cache.GetStringAsync(cacheKey);
+                if (redisList == null)
+                {
+                    var list = await _sentimentRepo.GetSentimentsAsync();
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(60));
+                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
+                    return Ok(list);
+                }
+
+                var responseList = JsonConvert.DeserializeObject<List<Sentiment>>(redisList);
+                return Ok(responseList);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message, ex);
                 return BadRequest(ex.Message);
             }
         }

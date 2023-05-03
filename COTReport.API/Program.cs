@@ -14,11 +14,17 @@ builder.Services.AddCors(opt =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+builder.Services.AddStackExchangeRedisCache(opt =>
+{
+    opt.Configuration = "localhost:6000";
+});
+
 builder.Services.AddDbContext<ReportDbContext>();
 builder.Services.AddScoped<ReportRepository>();
+builder.Services.AddScoped<SentimentRepository>();
 builder.Services.AddScoped<MyFxbookHelper>();
 
-builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
 var app = builder.Build();
