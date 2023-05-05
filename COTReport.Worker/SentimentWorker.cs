@@ -41,7 +41,7 @@ namespace COTReport.Worker
                     _logger.LogError(ex.Message, ex);
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(45));
+                await Task.Delay(TimeSpan.FromMinutes(30));
             }
         }
 

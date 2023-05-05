@@ -40,7 +40,7 @@ namespace COTReport.API.Controllers
                     });
 
                     var responseList = groupedList.OrderBy(x => x.Code);
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(120));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(responseList), cacheEntryOptions);
                     return Ok(responseList);
                 }
@@ -65,7 +65,7 @@ namespace COTReport.API.Controllers
                 if (redisList == null)
                 {
                     var list = await _reportRepo.GetReportByCodeAsync(code);
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(120));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(list);
                 }
@@ -90,7 +90,7 @@ namespace COTReport.API.Controllers
                 if (redisList == null)
                 {
                     var list = await _sentimentRepo.GetSentimentsAsync();
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(30));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(15));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(new { Symbols = list });
                 }
