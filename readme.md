@@ -28,3 +28,5 @@
 Inside the bash file the following
 docker start [container_name]
 
+### Crontab Config
+/bin/bash [bash_file_name_without_any_extensions]

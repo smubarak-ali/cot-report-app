@@ -35,11 +35,12 @@ internal class Program
             var _myFxbookHelper = serviceProvider.GetService<MyFxbookHelper>();
             var _sentimentRepo = serviceProvider.GetService<SentimentRepository>();
 
-            Log.Information("=> Worker running now...");
+            Log.Information("::Worker running now...");
             MyFxbookmodel data = await _myFxbookHelper.GetSeniments();
             if (data != null && data?.Symbols?.Count > 0)
             {
                 await _sentimentRepo.SaveRecords(data.Symbols.ToEntity());
+                Log.Information("Data is saved in the database");
             }
         }
         catch (ExternalApiException ex)
