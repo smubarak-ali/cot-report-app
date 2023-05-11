@@ -17,6 +17,7 @@ internal class Program
                     .CreateLogger();
 
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddDbContext<ReportDbContext>();
         services.AddSingleton<MyFxbookHelper>();
         services.AddSingleton<SentimentRepository>();
@@ -31,8 +32,8 @@ internal class Program
 
         try
         {
-            var _sentimentRepo = serviceProvider.GetService<SentimentRepository>();
             var _myFxbookHelper = serviceProvider.GetService<MyFxbookHelper>();
+            var _sentimentRepo = serviceProvider.GetService<SentimentRepository>();
 
             Log.Information("=> Worker running now...");
             MyFxbookmodel data = await _myFxbookHelper.GetSeniments();
