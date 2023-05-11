@@ -17,3 +17,14 @@
     EXPOSE 80
     ENTRYPOINT [ "dotnet", "COTReport.API.dll" ]
 
+
+### Bash file to run with the docker sentiment the crontab
+1- Run the script in the correct way
+2- One should have #!bin/bash at the starting of the script. It is a shebang that is required by each script.
+3- One should save the file without .sh extension
+4- One should provide the execution permission to the script by giving command chmod 777 script_name
+5- Run the script with bash script_name
+
+Inside the bash file the following
+docker start [container_name]
+
