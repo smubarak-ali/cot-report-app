@@ -3,23 +3,34 @@ using COTReport.Common.Helper;
 using COTReport.DAL.Context;
 using COTReport.DAL.Repository;
 using COTReport.Worker;
+using Serilog;
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+internal class Program
+{
+    private static async Task Main(string[] args)
     {
-        services.AddDbContext<ReportDbContext>();
-        services.AddSingleton<MyFxbookHelper>();
-        services.AddSingleton<SentimentRepository>();
-        services.AddLogging(opt => opt.AddConsole());
-
-        services.AddStackExchangeRedisCache(opt =>
+        IHost host = Host.CreateDefaultBuilder(args)
+        .ConfigureServices(services =>
         {
-            opt.Configuration = Environment.GetEnvironmentVariable("REDIS_HOST");
-        });
+            Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Console(outputTemplate: "{Timestamp:yy-MM-dd HH:mm} [{Level:u3}] ({ThreadId}) {Message}{NewLine}{Exception}")
+                    .CreateLogger();
 
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        services.AddHostedService<SentimentWorker>();
-    })
-    .Build();
+            services.AddDbContext<ReportDbContext>();
+            services.AddSingleton<MyFxbookHelper>();
+            services.AddSingleton<SentimentRepository>();
 
-await host.RunAsync();
+            services.AddStackExchangeRedisCache(opt =>
+            {
+                opt.Configuration = Environment.GetEnvironmentVariable("REDIS_HOST");
+            });
+
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            services.AddHostedService<SentimentWorker>();
+        })
+        .Build();
+
+        await host.RunAsync();
+    }
+}

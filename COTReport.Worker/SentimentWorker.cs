@@ -3,12 +3,13 @@ using COTReport.Common.Helper;
 using COTReport.Common.Mapper;
 using COTReport.Common.Model;
 using COTReport.DAL.Repository;
+using Serilog;
 
 namespace COTReport.Worker
 {
     public class SentimentWorker : BackgroundService
     {
-        private readonly ILogger _logger;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
         private readonly MyFxbookHelper _myFxbookHelper;
         private readonly SentimentRepository _sentimentRepo;
 
@@ -25,7 +26,8 @@ namespace COTReport.Worker
             {
                 try
                 {
-                    _logger.LogInformation("=> Worker running now...");
+                    // _logger.LogInformation("=> Worker running now...");
+                    Log.Information("=> Worker running now...");
                     MyFxbookmodel data = await _myFxbookHelper.GetSeniments();
                     if (data != null && data?.Symbols?.Count > 0)
                     {
@@ -34,11 +36,13 @@ namespace COTReport.Worker
                 }
                 catch (ExternalApiException ex)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    // _logger.LogError(ex.Message, ex);
+                    Log.Error(ex.Message, ex);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
+                    // _logger.LogError(ex.Message, ex);
+                    Log.Error(ex.Message, ex);
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(20));

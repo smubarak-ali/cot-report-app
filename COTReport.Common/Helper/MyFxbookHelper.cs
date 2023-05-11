@@ -28,7 +28,7 @@ namespace COTReport.Common.Helper
             string url = $"api/get-community-outlook.json?session={token}&debug=1";
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
-                throw new ExternalApiException("Failed the request when calling the myfxbook sentiments api");
+                throw new ExternalApiException($"Failed the request when calling the myfxbook sentiments api. The response status is {response.StatusCode}");
 
             var responseStr = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
@@ -51,7 +51,7 @@ namespace COTReport.Common.Helper
             string url = $"api/login.json?email={Environment.GetEnvironmentVariable("MYFXBOOK_USER")}&password={Environment.GetEnvironmentVariable("MYFXBOOK_PASS")}";
             var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
-                throw new ExternalApiException("Failed the myfxbook login api request");
+                throw new ExternalApiException($"Failed the request when calling the myfxbook login api. The response status is {response.StatusCode}");
 
             var responseStr = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<MyFxbookmodel>(responseStr);
