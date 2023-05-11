@@ -14,7 +14,7 @@ internal class Program
         {
             Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
-                    .WriteTo.Console(outputTemplate: "{Timestamp:yy-MM-dd HH:mm} [{Level:u3}] ({ThreadId}) {Message}{NewLine}{Exception}")
+                    .WriteTo.Console(outputTemplate: "{Timestamp:yy-MM-dd HH:mm} [{Level:u3}] - {Message}{NewLine}{Exception}")
                     .CreateLogger();
 
             services.AddDbContext<ReportDbContext>();
