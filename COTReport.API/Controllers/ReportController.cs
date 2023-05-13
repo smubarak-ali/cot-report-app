@@ -40,7 +40,7 @@ namespace COTReport.API.Controllers
                     });
 
                     var responseList = groupedList.OrderBy(x => x.Code);
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(60));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(responseList), cacheEntryOptions);
                     return Ok(responseList);
                 }
@@ -65,29 +65,13 @@ namespace COTReport.API.Controllers
                 if (redisList == null)
                 {
                     var list = await _reportRepo.GetReportByCodeAsync(code);
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(60)).SetSlidingExpiration(TimeSpan.FromMinutes(15));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(120)).SetSlidingExpiration(TimeSpan.FromMinutes(60));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(list);
                 }
 
                 var responseList = JsonConvert.DeserializeObject<List<Report>>(redisList);
                 return Ok(responseList);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("cot/clear")]
-        public async Task<IActionResult> ClearCotCache()
-        {
-            try
-            {
-                string cacheKey = "cot";
-                await _cache.RemoveAsync(cacheKey);
-                return Ok();
             }
             catch (Exception ex)
             {
@@ -106,7 +90,7 @@ namespace COTReport.API.Controllers
                 if (redisList == null)
                 {
                     var list = await _sentimentRepo.GetSentimentsAsync();
-                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(10)).SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                    var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(10)).SetSlidingExpiration(TimeSpan.FromMinutes(6));
                     await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
                     return Ok(new { Symbols = list });
                 }

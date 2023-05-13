@@ -1,11 +1,17 @@
 using COTReport.Common.Helper;
 using COTReport.DAL.Context;
 using COTReport.DAL.Repository;
+using Serilog;
+
+var logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm} [{Level:u3}] - {Message}{NewLine}{Exception}")
+                .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddCors(opt =>
 {
