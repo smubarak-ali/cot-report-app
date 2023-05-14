@@ -35,5 +35,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 app.UseCors("MyLocal");
+app.UseStaticFiles();
 app.MapControllers();
 app.Run();

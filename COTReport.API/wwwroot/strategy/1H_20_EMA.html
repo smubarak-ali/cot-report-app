@@ -1,0 +1,138 @@
+<html>
+
+<head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/base-min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+                .text-default {
+                        font-size: 0.85em;
+                        font-family: Helvetica, Arial, sans-serif;
+                        padding-bottom: 3px;
+                }
+
+                .text-nested {
+                        font-size: 0.8em;
+                        font-family: Helvetica, Arial, sans-serif;
+                        padding-bottom: 3px;
+                }
+
+                .ul-li {
+                        padding-bottom: 0.6em;
+                }
+
+                ul {
+                        padding-inline-start: 25px;
+                }
+        </style>
+</head>
+
+<body class="pure-u-1" style="padding: 8px;">
+        <div>
+                <ul>
+                        <li class="text-default">
+                                Strategy Setup:
+                        </li>
+                        <ul class="ul-li">
+                                <li class="text-nested">
+                                        20 EMA (close, shift 0) on 1H timeframe
+                                </li>
+                                <li class="text-nested">
+                                        12 and 26 EMA's (close, shift 0) on 5M timeframe
+                                </li>
+                                <li class="text-nested">
+                                        Only Pre-London, London and New York sessions
+                                </li>
+                                <li class="text-nested">
+                                        <span style="text-decoration: underline;">Optional</span> - MACD with only
+                                        histogram and default settings on 5M only</span>
+                                </li>
+                        </ul>
+
+                        <li class="text-default">
+                                Long Trade Setup:
+                        </li>
+                        <ul class="ul-li">
+                                <li class="text-nested">
+                                        Plot 20EMA on 1H chart and wait for the price to go either above or below the
+                                        EMA. Also, look for the slope in EMA, that way we will get the help from the
+                                        trend
+                                </li>
+                                <li class="text-nested">
+                                        Once a slope is spotted, drop down to 5M timeframe and plot 12 and 26 EMA's and
+                                        MACD
+                                </li>
+                                <li class="text-nested">
+                                        Wait for the 12 EMA to go above 26 EMA and also they are fanned out i.e. they
+                                        have distance in between
+                                </li>
+                                <li class="text-nested">
+                                        If MACD is applied then check if the red histogram is smaller and soon the green
+                                        bar will appear
+                                </li>
+                                <li class="text-nested">
+                                        Once the criteria matches, enter the trade with 1:2 RR
+                                </li>
+                        </ul>
+                        </li>
+                        <li class="text-default ul-li">
+                                Short Trade Setup:
+                        </li>
+                        <ul class="ul-li">
+                                <li class="text-nested">
+                                        Inverse / opposite of the long setup
+                                </li>
+                        </ul>
+                        </li>
+                        <li class="text-default">
+                                Recommendation:
+                        </li>
+                        <ul>
+                                <li class="text-nested">
+                                        Do <strong>not</strong> risk more than 0.5% per trade
+                                </li>
+                                <li class="text-nested">
+                                        Set a number of max trades criteria. For example, if first trade wins then stop
+                                        trading for the rest
+                                        of the day. Stop trading when two SL hits in a day, etc.
+                                </li>
+                                <li class="text-nested">
+                                        Avoid trading news and exit all the positions before
+                                </li>
+                        </ul>
+                </ul>
+
+                <span style="text-decoration: underline;">
+                        <strong>
+                                <span class="text-default">
+                                        EXAMPLE
+                                </span>
+                        </strong>
+                </span>
+
+                <ul>
+                        <li class="text-default">
+                                <a href="https://www.tradingview.com/x/nU0NCOW0/" target="_blank">Some examples of the
+                                        no trades and valid trades</a>
+                        </li>
+                        <li class="text-default">
+                                <a href="https://www.tradingview.com/x/cT6EuhZn/" target="_blank">Example of 5M
+                                        entry</a>
+                        </li>
+
+                        <li class="text-default">
+                                <a href="https://www.tradingview.com/x/KYLZ7Vk7/" target="_blank">No trade 5M
+                                        example</a>
+                        </li>
+                        <li class="text-default">
+                                <a href="https://www.tradingview.com/x/mAOXDWZJ/" target="_blank">5M entry</a>
+                        </li>
+                </ul>
+
+        </div>
+
+</body>
+
+</html>
