@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
@@ -11,23 +11,28 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5143",
+      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "REDIS_HOST": "localhost:6000",
+        "CONNECTION_STR": "Host=localhost; Database=tradingdb; Username=mubarak; Password=mubarak",
+        "MYFXBOOK_USER": "mubarakali.00@gmail.com",
+        "MYFXBOOK_PASS": "Syedmubarakali.00",
+        "MYFXBOOK_URL": "https://www.myfxbook.com"
+      },
+      "dotnetRunMessages": true
     },
     "https": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7245;http://localhost:5143",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",

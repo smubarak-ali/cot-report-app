@@ -1,5 +1,6 @@
 using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
+using COTReport.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,14 +15,23 @@ namespace COTReport.API.Controllers
         private readonly ReportRepository _reportRepo;
         private readonly SentimentRepository _sentimentRepo;
         private readonly ILogger _logger;
-        private readonly IDistributedCache _cache;
+        //private readonly IDistributedCache _cache;
+        private readonly ICacheService<List<Report>> _reportCacheService;
+        private readonly ICacheService<List<Sentiment>> _sentimentCacheService;
 
-        public ReportController(ReportRepository reportRepository, ILogger<ReportController> logger, IDistributedCache cache, SentimentRepository sentimentRepo)
+        public ReportController(
+            ReportRepository reportRepository,
+            ILogger<ReportController> logger,
+            SentimentRepository sentimentRepo,
+            ICacheService<List<Report>> reportCacheService,
+            ICacheService<List<Sentiment>> sentimentCacheService)
         {
             _reportRepo = reportRepository;
             _sentimentRepo = sentimentRepo;
             _logger = logger;
-            _cache = cache;
+            _reportCacheService = reportCacheService;
+            _sentimentCacheService = sentimentCacheService;
+            //_cache = cache;
         }
 
         [HttpGet("cot")]
@@ -30,8 +40,8 @@ namespace COTReport.API.Controllers
             try
             {
                 string cacheKey = "cot";
-                var redisList = await _cache.GetStringAsync(cacheKey);
-                if (redisList == null)
+                var redisList = await _reportCacheService.GetDataAsync(cacheKey);
+                if (redisList == default)
                 {
                     var list = await _reportRepo.GetReportAsync();
                     var groupedList = list.GroupBy(x => x.Code).Select(x =>
@@ -39,14 +49,14 @@ namespace COTReport.API.Controllers
                         return x.First();
                     });
 
-                    var responseList = groupedList.OrderBy(x => x.Code);
+                    var responseList = groupedList.OrderBy(x => x.Code).ToList();
                     var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(180)).SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(responseList), cacheEntryOptions);
+                    await _reportCacheService.SaveInCacheAsync(cacheKey, responseList, absoluteExpiration: 180, slidingExpiration: 60);
                     return Ok(responseList);
                 }
 
-                var cachedListForResponse = JsonConvert.DeserializeObject<IEnumerable<Report>>(redisList);
-                return Ok(cachedListForResponse);
+                
+                return Ok(redisList);
             }
             catch (Exception ex)
             {
@@ -61,17 +71,16 @@ namespace COTReport.API.Controllers
             try
             {
                 string cacheKey = code;
-                var redisList = await _cache.GetStringAsync(cacheKey);
-                if (redisList == null)
+                var redisList = await _reportCacheService.GetDataAsync(cacheKey);
+                if (redisList == default)
                 {
                     var list = await _reportRepo.GetReportByCodeAsync(code);
                     var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(120)).SetSlidingExpiration(TimeSpan.FromMinutes(60));
-                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
+                    await _reportCacheService.SaveInCacheAsync(cacheKey, list, absoluteExpiration: 120, slidingExpiration: 60);
                     return Ok(list);
                 }
 
-                var responseList = JsonConvert.DeserializeObject<List<Report>>(redisList);
-                return Ok(responseList);
+                return Ok(redisList);
             }
             catch (Exception ex)
             {
@@ -86,17 +95,17 @@ namespace COTReport.API.Controllers
             try
             {
                 string cacheKey = "sentiments";
-                var redisList = await _cache.GetStringAsync(cacheKey);
-                if (redisList == null)
+                var redisList = await _sentimentCacheService.GetDataAsync(cacheKey);
+                if (redisList == default)
                 {
                     var list = await _sentimentRepo.GetSentimentsAsync();
                     var cacheEntryOptions = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTime.Now.AddMinutes(7)).SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(list), cacheEntryOptions);
+                    await _sentimentCacheService.SaveInCacheAsync(cacheKey, list);
                     return Ok(new { Symbols = list });
                 }
 
-                var responseList = JsonConvert.DeserializeObject<List<Sentiment>>(redisList);
-                return Ok(new { Symbols = responseList });
+                
+                return Ok(new { Symbols = redisList });
             }
             catch (Exception ex)
             {

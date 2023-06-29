@@ -1,6 +1,9 @@
 using COTReport.Common.Helper;
 using COTReport.DAL.Context;
+using COTReport.DAL.Entity;
 using COTReport.DAL.Repository;
+using COTReport.Service.Implementation;
+using COTReport.Service.Interface;
 using Serilog;
 
 var logger = new LoggerConfiguration()
@@ -30,6 +33,9 @@ builder.Services.AddDbContext<ReportDbContext>();
 builder.Services.AddScoped<ReportRepository>();
 builder.Services.AddScoped<SentimentRepository>();
 builder.Services.AddScoped<MyFxbookHelper>();
+builder.Services.AddSingleton(typeof(ICacheService<>), typeof(CacheService<>));
+builder.Services.AddScoped<ICacheService<List<Report?>>, ReportCacheService>();
+builder.Services.AddScoped<ICacheService<List<Sentiment?>>, SentimentCacheService>();
 
 builder.Services.AddControllers();
 

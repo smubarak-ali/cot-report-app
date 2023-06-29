@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.API", "COTReport.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.Worker", "COTReport.Worker\COTReport.Worker.csproj", "{80606FCA-B305-4841-B637-60ADC167E217}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.WebApp", "COTReport.WebApp\COTReport.WebApp.csproj", "{6F8BDEAF-94CD-4BF9-B030-ADA720C92C8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COTReport.Service", "COTReport.Service\COTReport.Service.csproj", "{3F4BC642-144B-4F1A-9D3F-92872E0DB4DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{80606FCA-B305-4841-B637-60ADC167E217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80606FCA-B305-4841-B637-60ADC167E217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80606FCA-B305-4841-B637-60ADC167E217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8BDEAF-94CD-4BF9-B030-ADA720C92C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8BDEAF-94CD-4BF9-B030-ADA720C92C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8BDEAF-94CD-4BF9-B030-ADA720C92C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8BDEAF-94CD-4BF9-B030-ADA720C92C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F4BC642-144B-4F1A-9D3F-92872E0DB4DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F4BC642-144B-4F1A-9D3F-92872E0DB4DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F4BC642-144B-4F1A-9D3F-92872E0DB4DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F4BC642-144B-4F1A-9D3F-92872E0DB4DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

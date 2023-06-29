@@ -1,0 +1,15 @@
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/bin/Debug/net6.0/COTReport.Service.deps.json
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/bin/Debug/net6.0/COTReport.Service.dll
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/bin/Debug/net6.0/COTReport.Service.pdb
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/bin/Debug/net6.0/COTReport.DAL.dll
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/bin/Debug/net6.0/COTReport.DAL.pdb
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.csproj.AssemblyReference.cache
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.AssemblyInfoInputs.cache
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.AssemblyInfo.cs
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.csproj.CoreCompileInputs.cache
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.csproj.CopyComplete
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.dll
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/refint/COTReport.Service.dll
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/COTReport.Service.pdb
+/Users/mubarakali/codes/trading-app/cot-report-reader/COTReport.Service/obj/Debug/net6.0/ref/COTReport.Service.dll
